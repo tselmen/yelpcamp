@@ -1,0 +1,22 @@
+{
+  "name": "yelpcamp",
+  "version": "1.0.0",
+  "description": "Very first porject",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tselmen/yelpcamp.git"
+  },
+  "author": "Tselmen Tugsbayar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tselmen/yelpcamp/issues"
+  },
+  "homepage": "https://github.com/tselmen/yelpcamp#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
