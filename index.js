@@ -7,6 +7,7 @@ const ExpressError = require('./utils/ExpressError');
 const Campground = require('./models/campground');
 const methodOverride = require('method-override');
 const ejsMate = require('ejs-mate');
+const {campgroundSchema} = require('./campgroundSchema')
 
 // noinspection JSIgnoredPromiseFromCall
 mongoose.connect('mongodb+srv://tselmen:a45bc374@idk.qw4hr.mongodb.net/yelpcamp?retryWrites=true&w=majority', {
@@ -29,6 +30,16 @@ app.engine('ejs', ejsMate);
 app.use(express.urlencoded({extended: true}));
 app.use(methodOverride('_method'));
 
+const validateCampground = (req, res, next) => {
+  const {error} = campgroundSchema.validate(req.body);
+  if(error){
+    const msg = error.details.map(el => el.message).join(", ")
+    throw new ExpressError(msg, 400)
+  } else{
+    next()
+  }
+}
+
 app.get('/', (req, res) => {
   res.render('home')
 });
@@ -42,8 +53,9 @@ app.get('/campgrounds/new', (req, res) => {
   res.render('campgrounds/new')
 });
 
-app.post('/campgrounds', catchAsync(async (req, res, next) => {
-  if(!req.body.campground) throw new ExpressError('Invalid values', 400)
+app.post('/campgrounds', validateCampground, catchAsync(async (req, res, next) => {
+  // if(!req.body.campground) throw new ExpressError('Invalid values', 400)
+
   const campground = new Campground(req.body.campground);
   await campground.save();
   res.redirect(`/campgrounds/${campground._id}`);
@@ -59,7 +71,7 @@ app.get('/campgrounds/:id/edit', async (req, res) => {
   res.render('campgrounds/edit', {campground})
 })
 
-app.put('/campgrounds/:id', catchAsync(async (req, res) => {
+app.put('/campgrounds/:id', validateCampground, catchAsync(async (req, res) => {
   const campground = await Campground.findByIdAndUpdate(req.params.id, {...req.body.campground});
   // noinspection JSUnresolvedVariable
   res.redirect(`/campgrounds/${campground._id}`);
