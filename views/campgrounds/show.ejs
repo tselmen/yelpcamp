@@ -1,6 +1,6 @@
 <% layout('layouts/boilerplate') %>
 <div class="row">
-    <div class="col-6">
+    <div class="col-md-6">
         <div class="card">
             <img src="<%= campground.image %>" alt="campground" class="card-img-top">
             <div class="card-body">
@@ -19,7 +19,7 @@
         </div>
 
     </div>
-    <div class="col-6">
+    <div class="col-md-6">
         <h2 class="mt-3">Leave a review</h2>
         <form action="/campgrounds/<%= campground._id %>/reviews" method="POST" novalidate class="needs-validation">
             <div class="mb-3">
