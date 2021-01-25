@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Campground = require("../models/campground");
 const cities = require("./cities");
 const { places, descriptors } = require("./seedsHelper");
+const nodeFetch = require("node-fetch")
 
 mongoose.connect("mongodb://localhost:27017/yelpcamp", {
   useNewUrlParser: true,
@@ -19,14 +20,16 @@ const sample = (array) => array[Math.floor(Math.random() * array.length)];
 
 const seedDB = async () => {
   await Campground.deleteMany({});
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 10; i++) {
+    const imgURL = await nodeFetch("https://source.unsplash.com/collection/483251")
     const random = Math.floor(Math.random() * 1000);
     const price = Math.floor(Math.random() * 20) + 10;
     const camp = new Campground({
+      author: "600e7eb3213f4e3788bb0294",
       title: `${sample(descriptors)} ${sample(places)}`,
       location: `${cities[random].city}, ${cities[random].state}`,
       image:
-        "https://images.unsplash.com/photo-1484190812281-2387e3ae33a5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MXwxfDB8MXxyYW5kb218fHx8fHx8fA&ixlib=rb-1.2.1&q=80&w=1080",
+        imgURL.url,
       description:
         "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eligendi, quaerat ex a debitis tempora amet exercitationem dolor obcaecati sunt nam provident totam delectus, similique magnam! Eveniet sit tempore distinctio tempora?",
       price: price,
