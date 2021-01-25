@@ -9,6 +9,10 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const campgroundsRoute = require("./routes/campgrounds");
 const reviewsRoute = require("./routes/reviews");
+const usersRoute = require("./routes/users");
+const passport = require("passport");
+const passportLocal = require("passport-local");
+const User = require("./models/user");
 
 mongoose.connect("mongodb://localhost:27017/yelpcamp", {
   useNewUrlParser: true,
@@ -27,10 +31,6 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.engine("ejs", ejsMate);
 
-app.use(express.urlencoded({ extended: true }));
-app.use(methodOverride("_method"));
-app.use(express.static(path.join(__dirname, "public")));
-
 const sessionConfig = {
   secret: "thisshouldbeabettersecret!",
   resave: false,
@@ -41,8 +41,17 @@ const sessionConfig = {
     httpOnly: true,
   },
 };
+
+app.use(express.urlencoded({ extended: true }));
+app.use(methodOverride("_method"));
+app.use(express.static(path.join(__dirname, "public")));
 app.use(session(sessionConfig));
 app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new passportLocal(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 app.use((req, res, next) => {
   res.locals.success = req.flash("success");
@@ -56,6 +65,7 @@ app.get("/", (req, res) => {
 
 app.use("/campgrounds", campgroundsRoute);
 app.use("/campgrounds/:id/reviews", reviewsRoute);
+app.use("/", usersRoute);
 
 app.all("*", (req, res, next) => {
   next(new ExpressError("Page not found", 404));
