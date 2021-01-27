@@ -1,3 +1,6 @@
+if(process.env.NODE_ENV !== "production"){
+  require("dotenv").config();
+}
 const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
@@ -13,6 +16,8 @@ const usersRoute = require("./routes/users");
 const passport = require("passport");
 const passportLocal = require("passport-local");
 const User = require("./models/user");
+const mongoSanitize = require("express-mongo-sanitize")
+const helmet = require("helmet")
 
 mongoose.connect("mongodb://localhost:27017/yelpcamp", {
   useNewUrlParser: true,
@@ -39,6 +44,7 @@ const sessionConfig = {
     expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
     maxAge: 1000 * 60 * 60 * 24 * 7,
     httpOnly: true,
+    secure: true
   },
 };
 
@@ -49,6 +55,8 @@ app.use(session(sessionConfig));
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(mongoSanitize());
+app.use(helmet({contentSecurityPolicy: false}))
 passport.use(new passportLocal(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());

@@ -2,8 +2,27 @@
 <link rel="stylesheet" href="/styles/star.css">
 <div class="row">
     <div class="col-md-6">
-        <div class="card">
-            <img src="<%= campground.image %>" alt="campground" class="card-img-top">
+
+        <div class="card text-light bg-dark">
+            <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    <%campground.images.forEach((img, i) => {%>
+                        <div class="carousel-item <%= i===0 ? "active" : ""%> ratio ratio-16x9">
+                            <img src="<%= img.url %>" class="d-block w-100 card-img-top" alt="">
+                        </div>
+                    <%})%>
+                </div>
+                <%if(campground.images.length > 1){%>
+                    <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </a>
+                <%}%>
+            </div>
             <div class="card-body">
                 <h5 class="card-title"><%= campground.title %></h5>
                 <p class="card-text"><%= campground.description %></p>
@@ -51,7 +70,7 @@
         <% } %>
         <h2 class="mb-3">Reviews:</h2>
         <% for(let review of campground.reviews.reverse()) { %>
-            <div class="card mb-3 ">
+            <div class="card mb-3 text-light bg-secondary">
                 <div class="card-body">
                     <h5 class="card-title"><%= review.author.username %></h5>
                     <p class="starability-result" data-rating="<%= review.rating %>">
